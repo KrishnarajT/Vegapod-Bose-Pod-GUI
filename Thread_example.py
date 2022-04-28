@@ -21,6 +21,7 @@ class Worker(QObject):
         self.finished.emit()  # emit the finished signal when the loop is done
 
     def stop(self):
+        print('i was clicked')
         self.continue_run = False  # set the run condition to false on stop
 
 

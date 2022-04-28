@@ -1,7 +1,7 @@
 # from mpu6050 import mpu6050
 import time
 
-def get_accel_output():
+def get_accel_output(ax):
     # mpu = mpu6050(0x68)
 
     # print('Sensor output has been called')
@@ -22,6 +22,7 @@ def get_accel_output():
     # print()
     # print('=========================')
     accel_data = [1, 1, 1]
+    ax.setText(str(accel_data[0]))
     # gyro_data = [2, 2, 2]
 
     return accel_data

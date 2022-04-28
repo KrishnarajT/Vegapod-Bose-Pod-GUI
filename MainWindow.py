@@ -15,53 +15,29 @@ import sys, os
 from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap
 import motor_control as mtcr
-import sensor_output as so
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 
+import sensor_output as so
 
 class Worker(QObject):
     
     finished = pyqtSignal()  # give worker class a finished signal
-    # def __init__(self, parent=None):
-        # QObject.__init__(self, parent=parent)
-        # self.continue_run = True  # provide a bool run condition for the class
+    asx = pyqtSignal()
+    
+    def __init__(self, parent):
+        QtCore.QThread.__init__(self, parent)
 
-    def do_work(
-        self, ax, ay, az, gx, gy, gz, temp, 
-                navigation_tab_widget):
-        navigation_tab_widget.setCurrentIndex(2)    
-        i = 1
+    def do_work(self):
         
-        while True:  # give the loop a stoppable condition
-            print(i)
-            i = i + 1
-                
-            # if 'Forward' == self.direction_combo_box.currentText():
-            #     self.start_value = 1
-            # else: self.start_value = 2
-            
-            # self.end_value = self.end_value_line_edit.text()
-            # self.step_value = self.step_value_line_edit.text()
-            # self.end_value = self.end_value_line_edit.text()
-            # self.interval = self.interval_line_edit.text()
-            
-            # # Calling the function to run the motors. 
-            # mtcr.input_and_control(self.start_value, self.end_value, self.step_value, self.interval)
-            self.accel_data = so.get_accel_output()
-            self.gyro_data = so.get_gyro_output()
-            
-            ax.setText(str(self.accel_data[0]))
-            
-            
-            QThread.sleep(1)
-            
-            # switching tab to data tab
-            
-        
+        print('i was run')
+        ax = so.get_accel_output(ax)
+        self.asx.emit(ax)
+        QThread.sleep(1)
+
         self.finished.emit()  # emit the finished signal when the loop is done
 
     def stop(self):
-        self.continue_run = False  # set the run condition to false on stop
+        print('stopping')
 
 class Ui_MainWindow(QMainWindow):
     stop_signal = pyqtSignal()  # make a stop signal to communicate with the worker in another thread
@@ -79,38 +55,47 @@ class Ui_MainWindow(QMainWindow):
         self.step_value = 5
         self.interval = 500
         
-    
-    def press_start_btn(self):
-        self.navigation_tab_widget.setCurrentIndex(0)
-        import time
-        # time.sleep(2)
-        self.worker.do_work(self.acc_x_value_lbl, self.acc_y_value_lbl, self.acc_z_value_lbl,
-                                                                self.gyro_x_value_lbl, self.gyro_y_value_lbl, self.gyro_z_value_lbl,
-                                                                self.temp_value_lbl, self.navigation_tab_widget)
-    
-    def stop_thread(self):
-        self.stop_signal.emit()  
         
     def start_pod(self):
-        if 'Forward' == self.direction_combo_box.currentText():
-            self.start_value = 1
-        else: self.start_value = 2
+        # if 'Forward' == self.direction_combo_box.currentText():
+        #     self.start_value = 1
+        # else: self.start_value = 2
         
-        self.end_value = self.end_value_line_edit.text()
-        self.step_value = self.step_value_line_edit.text()
-        self.end_value = self.end_value_line_edit.text()
-        self.interval = self.interval_line_edit.text()
+        # self.end_value = self.end_value_line_edit.text()
+        # self.step_value = self.step_value_line_edit.text()
+        # self.end_value = self.end_value_line_edit.text()
+        # self.interval = self.interval_line_edit.text()
         
-        # Calling the function to run the motors. 
-        mtcr.input_and_control(self.start_value, self.end_value, self.step_value, self.interval)
+        # # Calling the function to run the motors. 
+        # mtcr.input_and_control(self.start_value, self.end_value, self.step_value, self.interval)
 
-        # switching tab to data tab
-        self.navigation_tab_widget.setCurrentIndex(2)
+        # # switching tab to data tab
+        # self.navigation_tab_widget.setCurrentIndex(2)
         
+        
+        self.thread = QThread()
+        self.worker = Worker(parent=self)
+        self.worker.asx.connect(self.updateit)
+        # self.stop_signal.connect(self.worker.stop)  # connect stop signal to worker stop method
+        # self.worker.moveToThread(self.thread)
+
+        # self.thread.started.connect(lambda: self.worker.do_work(self.navigation_tab_widget, self.acc_x_value_lbl))
+        # self.worker.finished.connect(self.thread.quit)  # connect the workers finished signal to stop thread
+        # self.worker.finished.connect(self.worker.deleteLater)  # connect the workers finished signal to clean up worker
+        # self.thread.finished.connect(self.thread.deleteLater)  # connect threads finished signal to clean up thread
+
+        # self.thread.finished.connect(self.worker.stop)
+        self.thread.start()
+        
+    def updateit(self, ax):
+        self.acc_x_value_lbl.setText(ax)
+      
+    def stop_pod(self):
+        self.stop_signal.emit()
         
     def setupUi(self):
+
         
-                
         # Setting Font
         font = QtGui.QFont()
         font.setFamily("Arvo")
@@ -124,27 +109,7 @@ class Ui_MainWindow(QMainWindow):
         self.navigation_tab_widget.setGeometry(QtCore.QRect(0, 100, 720, 380))
         self.navigation_tab_widget.setStyleSheet("background-color: #DDDDDD")
         self.navigation_tab_widget.setObjectName("navigation_tab_widget")
-    
         
-        
-        # Thread:
-        self.thread = QThread()
-        self.worker = Worker()
-        self.stop_signal.connect(self.worker.stop)  # connect stop signal to worker stop method
-        self.worker.moveToThread(self.thread)
-
-        self.worker.finished.connect(self.thread.quit)  # connect the workers finished signal to stop thread
-        self.worker.finished.connect(self.worker.deleteLater)  # connect the workers finished signal to clean up worker
-        self.thread.finished.connect(self.thread.deleteLater)  # connect threads finished signal to clean up thread
-
-        self.thread.started.connect(self.press_start_btn)
-        self.thread.finished.connect(self.worker.stop)
-
-        
-        
-        
-        
-
         
         # Adding the Heading Image. 
         
@@ -172,7 +137,7 @@ class Ui_MainWindow(QMainWindow):
         
         
         self.start_value_lbl = QtWidgets.QLabel(self.inputs_tab)
-        self.start_value_lbl.setGeometry(QtCore.QRect(110, 70, 231, 51))
+        self.start_value_lbl.setGeometry(QtCore.QRect(140, 70, 231, 51))
         self.start_value_lbl.setFont(font)
         self.start_value_lbl.setStyleSheet("color:#06113C")
         self.start_value_lbl.setObjectName("start_value_lbl")
@@ -219,6 +184,10 @@ class Ui_MainWindow(QMainWindow):
         self.interval_line_edit.setObjectName("interval_line_edit")
         
         
+        self.start_btn = QtWidgets.QPushButton(self.inputs_tab)
+        self.start_btn.setGeometry(QtCore.QRect(270, 270, 160, 34))
+        self.start_btn.setObjectName("start_btn")
+        self.start_btn.clicked.connect(self.start_pod)
         
         self.direction_combo_box = QtWidgets.QComboBox(self.inputs_tab)
         self.direction_combo_box.setGeometry(QtCore.QRect(420, 30, 171, 34))
@@ -290,11 +259,6 @@ class Ui_MainWindow(QMainWindow):
         self.layoutWidget.setGeometry(QtCore.QRect(70, 190, 111, 31))
         self.layoutWidget.setObjectName("layoutWidget")
         
-        self.start_btn = QtWidgets.QPushButton(self.data_tab)
-        self.start_btn.setGeometry(QtCore.QRect(270, 270, 160, 34))
-        self.start_btn.setObjectName("start_btn")
-        self.start_btn.clicked.connect(self.thread.start)
-        
         
         self.acc_y_hori_layout = QtWidgets.QHBoxLayout(self.layoutWidget)
         self.acc_y_hori_layout.setContentsMargins(0, 0, 0, 0)
@@ -325,21 +289,21 @@ class Ui_MainWindow(QMainWindow):
         self.acc_z_hori_layout.setContentsMargins(0, 0, 0, 0)
         self.acc_z_hori_layout.setObjectName("acc_z_hori_layout")
         
-        self.acc_z_lbl = QtWidgets.QLabel(self.layoutWidget_2)
-        self.acc_z_lbl.setFont(font)
-        self.acc_z_lbl.setStyleSheet("color:#06113C")
-        self.acc_z_lbl.setObjectName("acc_z_lbl")
+        self.acc_x_lbl_2 = QtWidgets.QLabel(self.layoutWidget_2)
+        self.acc_x_lbl_2.setFont(font)
+        self.acc_x_lbl_2.setStyleSheet("color:#06113C")
+        self.acc_x_lbl_2.setObjectName("acc_x_lbl_2")
         
         
-        self.acc_z_hori_layout.addWidget(self.acc_z_lbl)
+        self.acc_z_hori_layout.addWidget(self.acc_x_lbl_2)
         
-        self.acc_z_value_lbl = QtWidgets.QLabel(self.layoutWidget_2)
-        self.acc_z_value_lbl.setFont(font)
-        self.acc_z_value_lbl.setStyleSheet("color:#06113C")
-        self.acc_z_value_lbl.setObjectName("acc_z_value_lbl")
+        self.acc_y_value_lbl_2 = QtWidgets.QLabel(self.layoutWidget_2)
+        self.acc_y_value_lbl_2.setFont(font)
+        self.acc_y_value_lbl_2.setStyleSheet("color:#06113C")
+        self.acc_y_value_lbl_2.setObjectName("acc_y_value_lbl_2")
         
         
-        self.acc_z_hori_layout.addWidget(self.acc_z_value_lbl)
+        self.acc_z_hori_layout.addWidget(self.acc_y_value_lbl_2)
         
         
         # Then on the right we have the gyroscope Data
@@ -452,7 +416,7 @@ class Ui_MainWindow(QMainWindow):
         self.stop_btn = QtWidgets.QPushButton(self.data_tab)
         self.stop_btn.setGeometry(QtCore.QRect(260, 270, 160, 34))
         self.stop_btn.setObjectName("stop_btn")
-        self.stop_btn.clicked.connect(self.stop_thread)
+        self.stop_btn.clicked.connect(self.stop_pod)
 
 
         
@@ -479,7 +443,7 @@ class Ui_MainWindow(QMainWindow):
         self.end_value_lbl.setText(_translate("self", "Enter End Value"))
         self.interval_value_lbl.setText(_translate("self", "<html><head/><body><p>Enter Interval <br/>(in microseconds)</p></body></html>"))
         self.start_btn.setText(_translate("self", "Start Run"))
-        self.stop_btn.setText(_translate("self", "Terminate Run"))
+        self.stop_btn.setText(_translate("self", "Stop Run"))
         self.direction_combo_box.addItem("")
         self.direction_combo_box.addItem("")
         self.direction_combo_box.setItemText(0, _translate("self", "Forward"))
@@ -490,8 +454,8 @@ class Ui_MainWindow(QMainWindow):
         self.gyroscope_lbl.setText(_translate("self", "Gyroscope"))
         self.acc_y_lbl.setText(_translate("self", "Y:"))
         self.acc_y_value_lbl.setText(_translate("self", "10"))
-        self.acc_z_lbl.setText(_translate("self", "Z:"))
-        self.acc_z_value_lbl.setText(_translate("self", "10"))
+        self.acc_x_lbl_2.setText(_translate("self", "Z:"))
+        self.acc_y_value_lbl_2.setText(_translate("self", "10"))
         self.gyro_y_lbl.setText(_translate("self", "Y:"))
         self.gyro_y_value_lbl.setText(_translate("self", "10"))
         self.gyro_z_lbl.setText(_translate("self", "Z:"))
@@ -503,7 +467,6 @@ class Ui_MainWindow(QMainWindow):
         self.acc_x_lbl.setText(_translate("self", "X:"))
         self.acc_x_value_lbl.setText(_translate("self", "10"))
         self.navigation_tab_widget.setTabText(self.navigation_tab_widget.indexOf(self.data_tab), _translate("self", "Data"))
-
 
 
         # self.validator = QtGui.QRegExpValidator(QtCore.QRegExp(r'[0-9].+'))
