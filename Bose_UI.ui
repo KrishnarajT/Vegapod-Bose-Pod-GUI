@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>720</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="navigation_tab_widget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>100</y>
+      <width>720</width>
+      <height>380</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #DDDDDD</string>
+    </property>
+    <property name="currentIndex">
+     <number>2</number>
+    </property>
+    <widget class="QWidget" name="inputs_tab">
+     <attribute name="title">
+      <string>Inputs</string>
+     </attribute>
+     <widget class="QLabel" name="direction_lbl">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>20</y>
+        <width>231</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arvo</family>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#06113C</string>
+      </property>
+      <property name="text">
+       <string>Enter Direction of Pod</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="start_value_lbl">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>70</y>
+        <width>231</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arvo</family>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#06113C</string>
+      </property>
+      <property name="text">
+       <string>Enter Start Value</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="start_value_line_edit">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>80</y>
+        <width>113</width>
+        <height>34</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="end_value_lbl">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>120</y>
+        <width>231</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arvo</family>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#06113C</string>
+      </property>
+      <property name="text">
+       <string>Enter End Value</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="end_value_line_edit">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>130</y>
+        <width>113</width>
+        <height>34</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="interval_value_lbl">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>170</y>
+        <width>241</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arvo</family>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#06113C</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter Interval &lt;br/&gt;(in microseconds)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="interval_line_edit">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>180</y>
+        <width>113</width>
+        <height>34</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="start_btn">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>270</y>
+        <width>160</width>
+        <height>34</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Start Run</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="direction_combo_box">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>30</y>
+        <width>171</width>
+        <height>34</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#06113C</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Forward</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Reverse</string>
+       </property>
+      </item>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="dashboard_tab">
+     <attribute name="title">
+      <string>Dashboard</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="data_tab">
+     <attribute name="title">
+      <string>Data</string>
+     </attribute>
+     <widget class="QLabel" name="acceleration_lbl">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>90</y>
+        <width>141</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arvo</family>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#06113C</string>
+      </property>
+      <property name="text">
+       <string>Acceleration</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="gyroscope_lbl">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>90</y>
+        <width>141</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arvo</family>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#06113C</string>
+      </property>
+      <property name="text">
+       <string>Gyroscope</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>190</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="acc_y_hori_layout">
+       <item>
+        <widget class="QLabel" name="acc_y_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>Y:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="acc_y_value_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>10</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>230</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="acc_z_hori_layout">
+       <item>
+        <widget class="QLabel" name="acc_x_lbl_2">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>Z:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="acc_y_value_lbl_2">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>10</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>190</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="gyro_y_hori_layout">
+       <item>
+        <widget class="QLabel" name="gyro_y_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>Y:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="gyro_y_value_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>10</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>230</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="gyro_z_hori_layout">
+       <item>
+        <widget class="QLabel" name="gyro_z_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>Z:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="gyro_z_value_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>10</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget_5">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>150</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="gyro_x_hori_layout">
+       <item>
+        <widget class="QLabel" name="gyro_x_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>X:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="gyro_x_value_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>10</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>10</y>
+        <width>301</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="temp_hori_layout">
+       <item>
+        <widget class="QLabel" name="temp_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>Temperature in Celsius :</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="temp_hori_spacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Maximum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="temp_value_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+           <pointsize>15</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>40 C</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>150</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="acc_x_hori_layout">
+       <item>
+        <widget class="QLabel" name="acc_x_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>X:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="acc_x_value_lbl">
+         <property name="font">
+          <font>
+           <family>Arvo</family>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:#06113C</string>
+         </property>
+         <property name="text">
+          <string>10</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="heading_image_lbl">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>720</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
