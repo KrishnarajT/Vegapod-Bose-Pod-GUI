@@ -22,6 +22,8 @@ def input_and_control(start_val = 1, end_val = 20, step_val = 5, interval = 500)
     
     print('motor control code was run once (not in a loop).')
     
+    print(start_val, end_val, step_val, interval)
+    
     # #channel = 6
 
     # #GPIO setup

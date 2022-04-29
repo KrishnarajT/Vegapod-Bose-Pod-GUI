@@ -57,35 +57,37 @@ class Ui_MainWindow(QMainWindow):
         
         
     def start_pod(self):
-        # if 'Forward' == self.direction_combo_box.currentText():
-        #     self.start_value = 1
-        # else: self.start_value = 2
         
-        # self.end_value = self.end_value_line_edit.text()
-        # self.step_value = self.step_value_line_edit.text()
-        # self.end_value = self.end_value_line_edit.text()
-        # self.interval = self.interval_line_edit.text()
         
-        # # Calling the function to run the motors. 
-        # mtcr.input_and_control(self.start_value, self.end_value, self.step_value, self.interval)
+        if 'Forward' == self.direction_combo_box.currentText():
+            self.start_value = 1
+        else: self.start_value = 2
+        
+        self.end_value = self.end_value_line_edit.text()
+        self.step_value = self.step_value_line_edit.text()
+        self.end_value = self.end_value_line_edit.text()
+        self.interval = self.interval_line_edit.text()
+        
+        # Calling the function to run the motors. 
+        mtcr.input_and_control(self.start_value, self.end_value, self.step_value, self.interval)
 
         # # switching tab to data tab
         # self.navigation_tab_widget.setCurrentIndex(2)
         
         
-        self.thread = QThread()
-        self.worker = Worker(parent=self)
-        self.worker.asx.connect(self.updateit)
-        # self.stop_signal.connect(self.worker.stop)  # connect stop signal to worker stop method
-        # self.worker.moveToThread(self.thread)
+        # self.thread = QThread()
+        # self.worker = Worker(parent=self)
+        # self.worker.asx.connect(self.updateit)
+        # # self.stop_signal.connect(self.worker.stop)  # connect stop signal to worker stop method
+        # # self.worker.moveToThread(self.thread)
 
-        # self.thread.started.connect(lambda: self.worker.do_work(self.navigation_tab_widget, self.acc_x_value_lbl))
-        # self.worker.finished.connect(self.thread.quit)  # connect the workers finished signal to stop thread
-        # self.worker.finished.connect(self.worker.deleteLater)  # connect the workers finished signal to clean up worker
-        # self.thread.finished.connect(self.thread.deleteLater)  # connect threads finished signal to clean up thread
+        # # self.thread.started.connect(lambda: self.worker.do_work(self.navigation_tab_widget, self.acc_x_value_lbl))
+        # # self.worker.finished.connect(self.thread.quit)  # connect the workers finished signal to stop thread
+        # # self.worker.finished.connect(self.worker.deleteLater)  # connect the workers finished signal to clean up worker
+        # # self.thread.finished.connect(self.thread.deleteLater)  # connect threads finished signal to clean up thread
 
-        # self.thread.finished.connect(self.worker.stop)
-        self.thread.start()
+        # # self.thread.finished.connect(self.worker.stop)
+        # self.thread.start()
         
     def updateit(self, ax):
         self.acc_x_value_lbl.setText(ax)
@@ -136,16 +138,16 @@ class Ui_MainWindow(QMainWindow):
         self.direction_lbl.setObjectName("direction_lbl")
         
         
-        self.start_value_lbl = QtWidgets.QLabel(self.inputs_tab)
-        self.start_value_lbl.setGeometry(QtCore.QRect(140, 70, 231, 51))
-        self.start_value_lbl.setFont(font)
-        self.start_value_lbl.setStyleSheet("color:#06113C")
-        self.start_value_lbl.setObjectName("start_value_lbl")
+        # self.start_value_lbl = QtWidgets.QLabel(self.inputs_tab)
+        # self.start_value_lbl.setGeometry(QtCore.QRect(140, 70, 231, 51))
+        # self.start_value_lbl.setFont(font)
+        # self.start_value_lbl.setStyleSheet("color:#06113C")
+        # self.start_value_lbl.setObjectName("start_value_lbl")
         
         
-        self.start_value_line_edit = QtWidgets.QLineEdit(self.inputs_tab)
-        self.start_value_line_edit.setGeometry(QtCore.QRect(420, 80, 113, 34))
-        self.start_value_line_edit.setObjectName("start_value_line_edit")
+        # self.start_value_line_edit = QtWidgets.QLineEdit(self.inputs_tab)
+        # self.start_value_line_edit.setGeometry(QtCore.QRect(420, 80, 113, 34))
+        # self.start_value_line_edit.setObjectName("start_value_line_edit")
         
         
         self.end_value_lbl = QtWidgets.QLabel(self.inputs_tab)
@@ -439,7 +441,8 @@ class Ui_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("self", "BOSE POD GUI"))
         self.direction_lbl.setText(_translate("self", "Enter Direction of Pod"))
-        self.start_value_lbl.setText(_translate("self", "Enter Start Value"))
+        # self.start_value_lbl.setText(_translate("self", "Enter Start Value"))
+        self.step_value_lbl.setText(_translate("self", "Enter Step value"))
         self.end_value_lbl.setText(_translate("self", "Enter End Value"))
         self.interval_value_lbl.setText(_translate("self", "<html><head/><body><p>Enter Interval <br/>(in microseconds)</p></body></html>"))
         self.start_btn.setText(_translate("self", "Start Run"))
