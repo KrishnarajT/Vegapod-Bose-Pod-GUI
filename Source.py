@@ -2,7 +2,6 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtWidgets, QtCore
 from MainWindow import Ui_MainWindow
-import PIL
 
 
 if __name__ == '__main__':
