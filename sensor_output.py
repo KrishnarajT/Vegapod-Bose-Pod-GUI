@@ -1,5 +1,8 @@
 # from mpu6050 import mpu6050
 import time
+import random
+
+
 
 def get_accel_output(ax):
     # mpu = mpu6050(0x68)
@@ -29,5 +32,9 @@ def get_accel_output(ax):
 
 
 def get_gyro_output():
-    gyro_data = [2, 2, 2]
+    gyro_data = []
+    for i in range(3):
+        gyro_data.append(random.choice(range(100)))
+    print(gyro_data)
+    # gyro_data = [21, 212, 23]
     return gyro_data

@@ -16,28 +16,22 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap
 import motor_control as mtcr
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
-
+import time
 import sensor_output as so
 
+
 class Worker(QObject):
-    
-    finished = pyqtSignal()  # give worker class a finished signal
-    asx = pyqtSignal()
-    
-    def __init__(self, parent):
-        QtCore.QThread.__init__(self, parent)
+    finished = pyqtSignal()
+    progress = pyqtSignal(list)
 
-    def do_work(self):
-        
-        print('i was run')
-        ax = so.get_accel_output(ax)
-        self.asx.emit(ax)
-        QThread.sleep(1)
-
-        self.finished.emit()  # emit the finished signal when the loop is done
-
-    def stop(self):
-        print('stopping')
+    def run(self):
+        """Long-running task."""
+        for i in range(5):
+            a = so.get_gyro_output()
+            b = so.get_accel_output()
+            self.progress.emit(a)
+            time.sleep(1)
+        self.finished.emit()
 
 class Ui_MainWindow(QMainWindow):
     stop_signal = pyqtSignal()  # make a stop signal to communicate with the worker in another thread
@@ -55,6 +49,31 @@ class Ui_MainWindow(QMainWindow):
         self.step_value = 5
         self.interval = 500
         
+        
+    def runLongTask(self):
+        # Step 2: Create a QThread object
+        self.thread = QThread()
+        # Step 3: Create a worker object
+        self.worker = Worker()
+        # Step 4: Move worker to the thread
+        self.worker.moveToThread(self.thread)
+        # Step 5: Connect signals and slots
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.worker.progress.connect(self.reportProgress)
+        # Step 6: Start the thread
+        self.thread.start()
+
+        # Final resets
+        # self.longRunningBtn.setEnabled(False)
+        # self.thread.finished.connect(
+        #     lambda: self.longRunningBtn.setEnabled(True)
+        # )
+        # self.thread.finished.connect(
+        #     lambda: self.stepLabel.setText("Long-Running Step: 0")
+        # )
         
     def start_pod(self):
         
@@ -89,12 +108,26 @@ class Ui_MainWindow(QMainWindow):
         # # self.thread.finished.connect(self.worker.stop)
         # self.thread.start()
         
-    def updateit(self, ax):
-        self.acc_x_value_lbl.setText(ax)
+    # def updateit(self, gylist):
+    #     print('caleld me')
+    #     self.step_value_lbl.setText(str(gylist))
+    #     self.navigation_tab_widget.setCurrentIndex(2)
+    #     self.gyro_x_value_lbl.setText(str(gylist[0]))
+    #     self.gyro_y_value_lbl.setText(str(gylist[1]))
+    #     self.gyro_z_value_lbl.setText(str(gylist[2]))
       
     def stop_pod(self):
         self.stop_signal.emit()
-        
+
+    def reportProgress(self, n):
+        self.navigation_tab_widget.setCurrentIndex(2)
+        self.step_value_lbl.setText(f"Long-Running Step: {n[0]}")
+        self.gyro_x_value_lbl.setText(str(n[0]))
+        self.gyro_y_value_lbl.setText(str(n[1]))
+        self.gyro_z_value_lbl.setText(str(n[2]))        
+
+
+ 
     def setupUi(self):
 
         
@@ -189,7 +222,7 @@ class Ui_MainWindow(QMainWindow):
         self.start_btn = QtWidgets.QPushButton(self.inputs_tab)
         self.start_btn.setGeometry(QtCore.QRect(270, 270, 160, 34))
         self.start_btn.setObjectName("start_btn")
-        self.start_btn.clicked.connect(self.start_pod)
+        self.start_btn.clicked.connect(self.runLongTask)
         
         self.direction_combo_box = QtWidgets.QComboBox(self.inputs_tab)
         self.direction_combo_box.setGeometry(QtCore.QRect(420, 30, 171, 34))
