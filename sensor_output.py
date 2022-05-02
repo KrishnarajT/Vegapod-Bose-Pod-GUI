@@ -4,7 +4,7 @@ import random
 
 
 
-def get_accel_output(ax):
+def get_accel_output():
     # mpu = mpu6050(0x68)
 
     # print('Sensor output has been called')
@@ -24,10 +24,13 @@ def get_accel_output(ax):
     # print("Gyro Z: " +str(gyro_data['z']))
     # print()
     # print('=========================')
-    accel_data = [1, 1, 1]
-    ax.setText(str(accel_data[0]))
+    # accel_data = [1, 1, 1]
+    # ax.setText(str(accel_data[0]))
     # gyro_data = [2, 2, 2]
-
+    accel_data = []
+    for i in range(3):
+        accel_data.append(random.choice(range(100)))
+    print(accel_data)
     return accel_data
 
 

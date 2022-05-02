@@ -22,14 +22,14 @@ import sensor_output as so
 
 class Worker(QObject):
     finished = pyqtSignal()
-    progress = pyqtSignal(list)
+    progress = pyqtSignal(list, list)
 
     def run(self):
         """Long-running task."""
         for i in range(5):
             a = so.get_gyro_output()
             b = so.get_accel_output()
-            self.progress.emit(a)
+            self.progress.emit(a, b)
             time.sleep(1)
         self.finished.emit()
 
@@ -107,24 +107,20 @@ class Ui_MainWindow(QMainWindow):
 
         # # self.thread.finished.connect(self.worker.stop)
         # self.thread.start()
-        
-    # def updateit(self, gylist):
-    #     print('caleld me')
-    #     self.step_value_lbl.setText(str(gylist))
-    #     self.navigation_tab_widget.setCurrentIndex(2)
-    #     self.gyro_x_value_lbl.setText(str(gylist[0]))
-    #     self.gyro_y_value_lbl.setText(str(gylist[1]))
-    #     self.gyro_z_value_lbl.setText(str(gylist[2]))
+
       
     def stop_pod(self):
         self.stop_signal.emit()
 
-    def reportProgress(self, n):
+    def reportProgress(self, n, b):
         self.navigation_tab_widget.setCurrentIndex(2)
         self.step_value_lbl.setText(f"Long-Running Step: {n[0]}")
         self.gyro_x_value_lbl.setText(str(n[0]))
         self.gyro_y_value_lbl.setText(str(n[1]))
         self.gyro_z_value_lbl.setText(str(n[2]))        
+        self.acc_x_value_lbl.setText(str(b[0]))
+        self.acc_y_value_lbl.setText(str(b[1]))
+        self.acc_z_value_lbl.setText(str(b[2])) 
 
 
  
@@ -324,21 +320,21 @@ class Ui_MainWindow(QMainWindow):
         self.acc_z_hori_layout.setContentsMargins(0, 0, 0, 0)
         self.acc_z_hori_layout.setObjectName("acc_z_hori_layout")
         
-        self.acc_x_lbl_2 = QtWidgets.QLabel(self.layoutWidget_2)
-        self.acc_x_lbl_2.setFont(font)
-        self.acc_x_lbl_2.setStyleSheet("color:#06113C")
-        self.acc_x_lbl_2.setObjectName("acc_x_lbl_2")
+        self.acc_z_lbl = QtWidgets.QLabel(self.layoutWidget_2)
+        self.acc_z_lbl.setFont(font)
+        self.acc_z_lbl.setStyleSheet("color:#06113C")
+        self.acc_z_lbl.setObjectName("acc_z_lbl")
         
         
-        self.acc_z_hori_layout.addWidget(self.acc_x_lbl_2)
+        self.acc_z_hori_layout.addWidget(self.acc_z_lbl)
         
-        self.acc_y_value_lbl_2 = QtWidgets.QLabel(self.layoutWidget_2)
-        self.acc_y_value_lbl_2.setFont(font)
-        self.acc_y_value_lbl_2.setStyleSheet("color:#06113C")
-        self.acc_y_value_lbl_2.setObjectName("acc_y_value_lbl_2")
+        self.acc_z_value_lbl = QtWidgets.QLabel(self.layoutWidget_2)
+        self.acc_z_value_lbl.setFont(font)
+        self.acc_z_value_lbl.setStyleSheet("color:#06113C")
+        self.acc_z_value_lbl.setObjectName("acc_z_value_lbl")
         
         
-        self.acc_z_hori_layout.addWidget(self.acc_y_value_lbl_2)
+        self.acc_z_hori_layout.addWidget(self.acc_z_value_lbl)
         
         
         # Then on the right we have the gyroscope Data
@@ -488,10 +484,7 @@ class Ui_MainWindow(QMainWindow):
         self.navigation_tab_widget.setTabText(self.navigation_tab_widget.indexOf(self.dashboard_tab), _translate("self", "Dashboard"))
         self.acceleration_lbl.setText(_translate("self", "Acceleration"))
         self.gyroscope_lbl.setText(_translate("self", "Gyroscope"))
-        self.acc_y_lbl.setText(_translate("self", "Y:"))
-        self.acc_y_value_lbl.setText(_translate("self", "10"))
-        self.acc_x_lbl_2.setText(_translate("self", "Z:"))
-        self.acc_y_value_lbl_2.setText(_translate("self", "10"))
+      
         self.gyro_y_lbl.setText(_translate("self", "Y:"))
         self.gyro_y_value_lbl.setText(_translate("self", "10"))
         self.gyro_z_lbl.setText(_translate("self", "Z:"))
@@ -502,6 +495,10 @@ class Ui_MainWindow(QMainWindow):
         self.temp_value_lbl.setText(_translate("self", "40 C"))
         self.acc_x_lbl.setText(_translate("self", "X:"))
         self.acc_x_value_lbl.setText(_translate("self", "10"))
+        self.acc_y_lbl.setText(_translate("self", "Y:"))
+        self.acc_y_value_lbl.setText(_translate("self", "10"))
+        self.acc_z_lbl.setText(_translate("self", "Z:"))
+        self.acc_z_value_lbl.setText(_translate("self", "10"))
         self.navigation_tab_widget.setTabText(self.navigation_tab_widget.indexOf(self.data_tab), _translate("self", "Data"))
 
 
