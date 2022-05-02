@@ -71,6 +71,29 @@ for i in range(0, int((end_val / step_val))):
         # Apply Brakes. 
         
         
+    # Input sensor values. 
+    # Find distance
+    # check if distance is 50m if so break
+    # put values in a file or send it to the computer again. 
+        
+    # MEANWHILE
+    # Also run sensor code in this for loop, by iterating like a thousand times a second, 
+    # and getting sensor values, and at particular times within those iterations, also give instructions
+    # to the motor, to accelerate. The sensor values are read and immediately written to a file
+    # This way the motor code is run and the sensor data is written to a file. 
+    # Also before writing to the file, the sensor code starts calculating the distance covered, 
+    # and checks if it exceeds a certain amount, if so then break. 
+    
+    # After successful execution of the motor code, and successfully saving the sensor values in a csv file, 
+    # the PI now becomes the TCP server, and the main computer becomes the host. 
+    # the PI then sends the csv file through, and the main computer makes a graph out of it, to then display in the GUI. 
+    # this will cause the GUI to wait for the complete run of the pod, and will create a graph only after its done. 
+    
+    # another method would be to multithread the GUI code in the main computer, such that the PI continueously sends 
+    # new sensor values say every 20 ms, and we plot the graph and or show the values in a dashboard real time. 
+    # that means the PI immediately after receiving the motor code input values becomes a server, and starts sending values. 
+    
+        
 x = 0
 #print (x)
 ##value = bus.write_byte(addr1, 0)

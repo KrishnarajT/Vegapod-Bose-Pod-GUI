@@ -40,4 +40,8 @@ def input_and_control(start_val = 1, end_val = 20, step_val = 5, interval = 500)
     clientsocket.send(bytes(str(step_val), "utf-8"))
     time.sleep(0.5)
     clientsocket.send(bytes(str(interval), "utf-8"))
-    time.sleep(0.5)
+    
+    # Sending is done, waiting for execution
+    time.sleep(3)
+    
+    s.close();
