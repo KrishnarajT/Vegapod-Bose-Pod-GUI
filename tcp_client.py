@@ -31,22 +31,22 @@ x = int(0)
 #GPIO.output(24, False)  #exists in code
 
 direction_raw = s.recv(1024)
-direction = direction_raw.decode("utf-8")
-print(direction)
+direction = int(direction_raw.decode("utf-8"))
+print("direction is ", direction)
 
 # Receiving values from the main computer. 
 
 endVal_raw = s.recv(1024)                      #1-100
-end_val = endVal_raw.decode("utf-8")
-print(end_val)
+end_val = int(endVal_raw.decode("utf-8"))
+print("end val is", end_val)
 
 stepVal_raw = s.recv(1024)
-step_val = stepVal_raw.decode("utf-8")          #1-10
-print(step_val)
+step_val = int(stepVal_raw.decode("utf-8"))          #1-10
+print("step val is", step_val)
 
 interval_raw = s.recv(1024)
-interval = interval_raw.decode("utf-8")
-print(interval)
+interval = int(interval_raw.decode("utf-8"))
+print("inteval is", interval)
 
 # Giving command to the motor. 
 for i in range(0, int((end_val / step_val))):
@@ -84,7 +84,7 @@ time.sleep(1)
 print("Total delay : ", (end_val / step_val) * interval / 1000 )
 #x = 0
         
-        
+print('motor output given. ')       
 
 
 

@@ -2,6 +2,7 @@
 
 import smbus
 import time
+import socket
 # import RPi.GPIO as GPIO 
 
 def input_and_control(start_val = 1, end_val = 20, step_val = 5, interval = 500):
@@ -32,10 +33,11 @@ def input_and_control(start_val = 1, end_val = 20, step_val = 5, interval = 500)
     # Sending to PI
     print('sending values to pi')
 
-    clientsocket.send(bytes(start_val, "utf-8"))
-
-    clientsocket.send(bytes(end_val, "utf-8"))
-
-    clientsocket.send(bytes(step_val, "utf-8"))
-
-    clientsocket.send(bytes(delay, "utf-8"))
+    clientsocket.send(bytes(str(start_val), "utf-8"))
+    time.sleep(0.5)
+    clientsocket.send(bytes(str(end_val), "utf-8"))
+    time.sleep(0.5)
+    clientsocket.send(bytes(str(step_val), "utf-8"))
+    time.sleep(0.5)
+    clientsocket.send(bytes(str(interval), "utf-8"))
+    time.sleep(0.5)
