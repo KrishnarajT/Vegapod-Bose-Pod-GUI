@@ -36,8 +36,35 @@ class Worker(QObject):
         self.interval_val = interval_val
 
     def run(self):
+        print('motor code was invoked. ')
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        HOST = "127.0.0.1"
+        s.bind((HOST, 1234))
+        s.listen(5)
+        clientsocket, address = s.accept()
+        print(f"connection from {address} has been established!")
+        # while True:
+        # Sending to PI
+        print('sending values to pi')
+
+        clientsocket.send(bytes(str(self.direction), "utf-8"))
+        time.sleep(0.5)
+        clientsocket.send(bytes(str(self.end_val), "utf-8"))
+        time.sleep(0.5)
+        clientsocket.send(bytes(str(self.step_val), "utf-8"))
+        time.sleep(0.5)
+        clientsocket.send(bytes(str(self.interval_val), "utf-8"))
         
-        mtcr.input_and_control(self.direction, self.end_val, self.step_val, self.interval_val)
+        # Sending is done, waiting for execution
+        time.sleep(3)
+        
+        s.close()
+        print('connection closed')
+
+        
+        
+        
+        # mtcr.input_and_control(self.direction, self.end_val, self.step_val, self.interval_val)
         
         # """Long-running task."""
         # for i in range(5):
@@ -88,6 +115,7 @@ class Worker(QObject):
     def stop_immediately(self):
         # Maybe ask the pi to break? 
         print('breaking. ')
+        # self.maybeconnectionserver.close() and b4 that send break. 
         self.finished.emit()
 
 class Ui_MainWindow(QMainWindow):
