@@ -18,19 +18,76 @@ import motor_control as mtcr
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 import time
 import sensor_output as so
-
+import socket
 
 class Worker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(list, list)
+    gimme_values = pyqtSignal()
+
+    def __init__(self, direction_text, step_val, end_val, interval_val):
+        super().__init__()
+        if direction_text == 'Forward':
+            self.direction = 1
+        else: self.direction = 2
+        
+        self.step_val = step_val
+        self.end_val = end_val
+        self.interval_val = interval_val
 
     def run(self):
-        """Long-running task."""
-        for i in range(5):
-            a = so.get_gyro_output()
-            b = so.get_accel_output()
-            self.progress.emit(a, b)
-            time.sleep(1)
+        
+        mtcr.input_and_control(self.direction, self.end_val, self.step_val, self.interval_val)
+        
+        # """Long-running task."""
+        # for i in range(5):
+        #     print(self.step_val)
+        #     a = so.get_gyro_output()
+        #     b = so.get_accel_output()
+        #     self.progress.emit(a, b)
+        #     time.sleep(1)
+        
+        
+        
+        # HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+        # PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
+
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     s.bind((HOST, PORT))
+        #     s.listen()
+        #     clientsocket, addr = s.accept()
+        #     with clientsocket:
+        #         print(f"connection from {address} has been established!")
+
+        #         # Sending to PI
+        #         print('sending values to pi')
+
+        #         clientsocket.send(bytes(str(start_val), "utf-8"))
+        #         time.sleep(0.5)
+        #         clientsocket.send(bytes(str(end_val), "utf-8"))
+        #         time.sleep(0.5)
+        #         clientsocket.send(bytes(str(step_val), "utf-8"))
+        #         time.sleep(0.5)
+        #         clientsocket.send(bytes(str(interval), "utf-8"))
+                
+        #         # Sending is done, waiting for execution
+        #         time.sleep(3)
+                
+                
+        #         clientsocket.send()
+        #         print(f"Connected by {addr}")
+        #         clientsocket.sendall(b'hi')
+        #         while True:
+        #             data = clientsocket.recv(1024)
+        #             self.progress.emit([data])
+        #             print(data)
+        #             if not data:
+        #                 break
+        self.finished.emit()
+
+    def stop_immediately(self):
+        # Maybe ask the pi to break? 
+        print('breaking. ')
         self.finished.emit()
 
 class Ui_MainWindow(QMainWindow):
@@ -54,7 +111,8 @@ class Ui_MainWindow(QMainWindow):
         # Step 2: Create a QThread object
         self.thread = QThread()
         # Step 3: Create a worker object
-        self.worker = Worker()
+        self.worker = Worker(self.direction_combo_box.currentText(), int(self.step_value_line_edit.text()),\
+            int(self.end_value_line_edit.text()), int(self.interval_line_edit.text()))
         # Step 4: Move worker to the thread
         self.worker.moveToThread(self.thread)
         # Step 5: Connect signals and slots
@@ -63,6 +121,8 @@ class Ui_MainWindow(QMainWindow):
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
         self.worker.progress.connect(self.reportProgress)
+        self.worker.gimme_values.connect(self.give_val)
+        self.stop_signal.connect(self.worker.stop_immediately)
         # Step 6: Start the thread
         self.thread.start()
 
@@ -74,6 +134,12 @@ class Ui_MainWindow(QMainWindow):
         # self.thread.finished.connect(
         #     lambda: self.stepLabel.setText("Long-Running Step: 0")
         # )
+        
+    def stop_thread(self):
+        self.stop_signal.emit()
+    
+    def give_val(self):
+        return 1
         
     def start_pod(self):
         
@@ -132,6 +198,12 @@ class Ui_MainWindow(QMainWindow):
         font.setFamily("Arvo")
         font.setPointSize(15)
         
+        dir_ = QtCore.QDir("Roboto")
+        QtGui.QFontDatabase.addApplicationFont("./design/JerseyM54-aLX9.ttf")
+        
+        number_font = QtGui.QFont()
+        number_font.setFamily("Arvo")
+        number_font.setPointSize(70)
         # Defining Basic Widgets
         
         self.centralwidget = QtWidgets.QWidget(self)
@@ -235,6 +307,20 @@ class Ui_MainWindow(QMainWindow):
         self.dashboard_tab = QtWidgets.QWidget()
         self.dashboard_tab.setObjectName("dashboard_tab")
         self.navigation_tab_widget.addTab(self.dashboard_tab, "")
+        
+        self.dashboard_tab.setStyleSheet('background-color:#06113C')
+        
+        self.speed_lbl = QtWidgets.QLabel(self.dashboard_tab)
+        self.speed_lbl.setGeometry(QtCore.QRect(300, 100, 300, 100))
+        self.speed_lbl.setFont(number_font)
+        self.speed_lbl.setStyleSheet("color:#FF8C32")
+        self.speed_lbl.setObjectName("interval_value_lbl")        
+        
+        
+        
+        
+        
+        
         
         #############################################################################################
         #### Tab 3 - Data Tab ######        
@@ -447,7 +533,7 @@ class Ui_MainWindow(QMainWindow):
         self.stop_btn = QtWidgets.QPushButton(self.data_tab)
         self.stop_btn.setGeometry(QtCore.QRect(260, 270, 160, 34))
         self.stop_btn.setObjectName("stop_btn")
-        self.stop_btn.clicked.connect(self.stop_pod)
+        self.stop_btn.clicked.connect(self.stop_thread)
 
 
         
@@ -500,7 +586,7 @@ class Ui_MainWindow(QMainWindow):
         self.acc_z_lbl.setText(_translate("self", "Z:"))
         self.acc_z_value_lbl.setText(_translate("self", "10"))
         self.navigation_tab_widget.setTabText(self.navigation_tab_widget.indexOf(self.data_tab), _translate("self", "Data"))
-
+        self.speed_lbl.setText("24")
 
         # self.validator = QtGui.QRegExpValidator(QtCore.QRegExp(r'[0-9].+'))
         # self.curncy_1_line_edit.setValidator(self.validator)

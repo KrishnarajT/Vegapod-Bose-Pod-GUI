@@ -116,10 +116,10 @@ while (True):
                     
             print('motor output given. ')       
     except ConnectionRefusedError as e:
-        print(e)
+        # print(e)
         continue
     except ConnectionResetError as e2:
-        print(e2)
+        # print(e2)
         continue
 
                 
