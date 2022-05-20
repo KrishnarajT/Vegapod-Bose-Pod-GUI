@@ -19,10 +19,12 @@ from PyQt5.QtCore import QThread, QObject, pyqtSignal
 import time
 import sensor_output as so
 import socket
+from datetime import datetime
+
 
 class Worker(QObject):
     finished = pyqtSignal()
-    progress = pyqtSignal(list, list)
+    progress = pyqtSignal(list, list, float, int)
     gimme_values = pyqtSignal()
 
     def __init__(self, direction_text, step_val, end_val, interval_val):
@@ -37,79 +39,69 @@ class Worker(QObject):
 
     def run(self):
         print('motor code was invoked. ')
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        HOST = "127.0.0.1"
-        s.bind((HOST, 1234))
-        s.listen(5)
-        clientsocket, address = s.accept()
-        print(f"connection from {address} has been established!")
-        # while True:
-        # Sending to PI
-        print('sending values to pi')
-
-        clientsocket.send(bytes(str(self.direction), "utf-8"))
-        time.sleep(0.5)
-        clientsocket.send(bytes(str(self.end_val), "utf-8"))
-        time.sleep(0.5)
-        clientsocket.send(bytes(str(self.step_val), "utf-8"))
-        time.sleep(0.5)
-        clientsocket.send(bytes(str(self.interval_val), "utf-8"))
         
-        # Sending is done, waiting for execution
-        time.sleep(3)
-        
-        s.close()
-        print('connection closed')
-
-        
-        
-        
-        # mtcr.input_and_control(self.direction, self.end_val, self.step_val, self.interval_val)
-        
-        # """Long-running task."""
-        # for i in range(5):
-        #     print(self.step_val)
-        #     a = so.get_gyro_output()
-        #     b = so.get_accel_output()
-        #     self.progress.emit(a, b)
-        #     time.sleep(1)
-        
-        
-        
-        # HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
-        # PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
-
-        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        #     s.bind((HOST, PORT))
-        #     s.listen()
-        #     clientsocket, addr = s.accept()
-        #     with clientsocket:
-        #         print(f"connection from {address} has been established!")
-
-        #         # Sending to PI
-        #         print('sending values to pi')
-
-        #         clientsocket.send(bytes(str(start_val), "utf-8"))
-        #         time.sleep(0.5)
-        #         clientsocket.send(bytes(str(end_val), "utf-8"))
-        #         time.sleep(0.5)
-        #         clientsocket.send(bytes(str(step_val), "utf-8"))
-        #         time.sleep(0.5)
-        #         clientsocket.send(bytes(str(interval), "utf-8"))
                 
-        #         # Sending is done, waiting for execution
-        #         time.sleep(3)
+        # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # s.bind((socket.gethostname(), 1234))
+        # s.listen(5)
+        # clientsocket, address = s.accept()
+        # print(f"connection from {address} has been established!")
+
+        # clientsocket.send(bytes(self.direction, "utf-8"))
+        # time.sleep(0.5)
+        # clientsocket.send(bytes(self.end_val, "utf-8"))
+        # time.sleep(0.5)
+        # clientsocket.send(bytes(self.step_val, "utf-8"))
+        # time.sleep(0.5)
+        # clientsocket.send(bytes(self.interval_val, "utf-8"))
+        # time.sleep(0.5)
+            
+        # s.close()
+        # clientsocket.close
+        # clientsocket.detach
+        # time.sleep(1)        
+        
+        # #Connecting as client
+        # a = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # a.connect(('169.254.201.77', 1234))
+        # print(f"connection from {address} has been established AGAIN as client !!!")
+
+        # Take values for approx 20/25 seconds
+        x = time.time()
+        samay = 0
+        while (samay < 7):
+            b = time.time()
+            samay = b - x
+            print("inside recv loop")
+            
+            ### RECEIVING VALUES FROM PI and PARSING JSON
+
+            # Taking data from the PI as a dict. 
+            # raw_data = a.recv(1024)
+            # raw_data = raw_data.decode("utf-8")
+
+            # raw_data = json.loads(raw_data) # is now a dictionary. 
+
+            # accel_data = raw_data['Acceleration']
+            # gyro_data = raw_data['Gyroscope']
+            # rpm_data = raw_data['RPM']
+            # pressure_data = raw_data['Pressure']
+            
+            ### DUMMY VALUES  ###
+            
+            accel_data = [datetime.today().second * 2, datetime.today().second - 1, datetime.today().second]
+            gyro_data = [datetime.today().second * 5, datetime.today().second, datetime.today().second * 7]
+            rpm_data = 5000
+            pressure_data = 100.00
+
+            
+            ### Sending values to GUI for updating ###
+            
+            self.progress.emit(accel_data, gyro_data, pressure_data, rpm_data)
+            time.sleep(0.1)
+        
+        print("Session finished...")
                 
-                
-        #         clientsocket.send()
-        #         print(f"Connected by {addr}")
-        #         clientsocket.sendall(b'hi')
-        #         while True:
-        #             data = clientsocket.recv(1024)
-        #             self.progress.emit([data])
-        #             print(data)
-        #             if not data:
-        #                 break
         self.finished.emit()
 
     def stop_immediately(self):
@@ -206,7 +198,7 @@ class Ui_MainWindow(QMainWindow):
     def stop_pod(self):
         self.stop_signal.emit()
 
-    def reportProgress(self, n, b):
+    def reportProgress(self, n, b, p, r):
         self.navigation_tab_widget.setCurrentIndex(2)
         self.step_value_lbl.setText(f"Long-Running Step: {n[0]}")
         self.gyro_x_value_lbl.setText(str(n[0]))
@@ -215,6 +207,8 @@ class Ui_MainWindow(QMainWindow):
         self.acc_x_value_lbl.setText(str(b[0]))
         self.acc_y_value_lbl.setText(str(b[1]))
         self.acc_z_value_lbl.setText(str(b[2])) 
+        self.pressure_value_lbl.setText(str(p))
+        self.rpm_value_lbl.setText(str(r))
 
 
  
@@ -390,6 +384,37 @@ class Ui_MainWindow(QMainWindow):
         
         
         self.temp_hori_layout.addWidget(self.temp_value_lbl) 
+
+
+        self.pressure_lbl = QtWidgets.QLabel(self.data_tab)
+        self.pressure_lbl.setGeometry(200, 50, 300, 50)
+        self.pressure_lbl.setFont(font)
+        self.pressure_lbl.setStyleSheet("color:#06113C")
+        self.pressure_lbl.setObjectName("pressure_lbl")
+        
+   
+        font.setPointSize(15)
+        self.pressure_value_lbl = QtWidgets.QLabel(self.data_tab)
+        self.pressure_value_lbl.setGeometry(400, 50, 50, 50)
+        self.pressure_value_lbl.setFont(font)
+        self.pressure_value_lbl.setStyleSheet("color:#06113C")
+        self.pressure_value_lbl.setObjectName("pressure_value_lbl")
+        
+        
+        self.rpm_lbl = QtWidgets.QLabel(self.data_tab)
+        self.rpm_lbl.setGeometry(250, 90, 300, 50)
+        self.rpm_lbl.setFont(font)
+        self.rpm_lbl.setStyleSheet("color:#06113C")
+        self.rpm_lbl.setObjectName("rpm_lbl")
+        
+   
+        font.setPointSize(15)
+        self.rpm_value_lbl = QtWidgets.QLabel(self.data_tab)
+        self.rpm_value_lbl.setGeometry(400, 90, 50, 50)
+        self.rpm_value_lbl.setFont(font)
+        self.rpm_value_lbl.setStyleSheet("color:#06113C")
+        self.rpm_value_lbl.setObjectName("rpm_value_lbl")
+        
         
         # Then on the left we have Acceleration
         
@@ -605,8 +630,12 @@ class Ui_MainWindow(QMainWindow):
         self.gyro_z_value_lbl.setText(_translate("self", "10"))
         self.gyro_x_lbl.setText(_translate("self", "X:"))
         self.gyro_x_value_lbl.setText(_translate("self", "10"))
-        self.temp_lbl.setText(_translate("self", "Temperature in Celsius :"))
+        self.temp_lbl.setText(_translate("self", "Temperature (C) :"))
         self.temp_value_lbl.setText(_translate("self", "40 C"))
+        self.pressure_lbl.setText(_translate("self", "Pressure (atm) :"))
+        self.pressure_value_lbl.setText(_translate("self", "100"))
+        self.rpm_lbl.setText(_translate("self", "rpm :"))
+        self.rpm_value_lbl.setText(_translate("self", "100"))
         self.acc_x_lbl.setText(_translate("self", "X:"))
         self.acc_x_value_lbl.setText(_translate("self", "10"))
         self.acc_y_lbl.setText(_translate("self", "Y:"))

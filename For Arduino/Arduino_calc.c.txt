@@ -1,0 +1,107 @@
+#include <Wire.h>
+int dir, interval, endvalue, stepsize, max_val;
+int i = 0;
+int vesc_array[4] = {};
+int rpm_get = 200;
+int rpm;
+int duty = 0;
+void setup() {
+  Wire.begin(9);
+  Serial.begin(115200);
+  Wire.onReceive(receiveEvent);
+  Wire.onRequest(sendEvent);
+
+
+}
+
+void loop() {
+  /* if(i == 4){
+
+       i = 0;
+     }*/
+duty = 0;
+
+  if (i == 4) {
+    i = 0;
+    /* for (int k = 0; k < 4; k++) {
+       Serial.println(vesc_array[k]);
+      }*/
+
+
+    if (vesc_array[0] == 1) {
+      dir = vesc_array[0];
+      endvalue = vesc_array[1];
+      stepsize = vesc_array[2];
+      interval = vesc_array[3] * 10;
+      //stepsize = vesc_array[3];
+      Serial.println(dir);
+      Serial.println(endvalue);
+      Serial.println(interval);
+      Serial.println(stepsize);
+      
+      int total_steps = endvalue / stepsize;
+      max_val = endvalue + 1;
+      
+      for (int j = 0; j < total_steps; j++) {
+       
+       // Wire.onRequest(sendEvent);    commented by varad
+        duty = duty +  stepsize;
+       //SET DUTY HERE//
+        if (duty > endvalue){
+          //VESC.setDuty(0);
+          Serial.println(0);
+        }
+        else{
+        Serial.println(duty);
+        delay(interval);
+        }
+      
+      }
+   
+    }
+
+    if (vesc_array[0] == 0) {
+
+    }
+
+  }
+
+}
+
+void receiveEvent() {
+  while (Wire.available()) {
+    int x = Wire.read();
+    vesc_array[i] = x;
+    //Serial.println(vesc_array[i]);
+  }
+  i++;
+  /*
+    if (i == 0) {
+      dir = vesc_array[0];
+    }
+    if (i == 1) {
+      endvalue = vesc_array[1];
+    }
+    if (i == 2) {
+      interval = vesc_array[2];
+    }
+    if (i == 3) {
+      stepsize = vesc_array[3];
+    }
+  */
+}
+
+
+void sendEvent() {
+
+//GET RPM HERE//
+
+rpm = rpm_get;
+Wire.write(rpm);
+delay(5);
+
+  
+
+
+
+}

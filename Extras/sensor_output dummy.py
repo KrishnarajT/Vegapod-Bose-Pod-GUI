@@ -27,6 +27,7 @@ def get_accel_output():
     # accel_data = [1, 1, 1]
     # ax.setText(str(accel_data[0]))
     # gyro_data = [2, 2, 2]
+    
     accel_data = []
     for i in range(3):
         accel_data.append(random.choice(range(100)))
