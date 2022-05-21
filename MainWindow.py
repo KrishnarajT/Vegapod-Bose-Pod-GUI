@@ -31,11 +31,11 @@ class Worker(QObject):
         super().__init__()
         if direction_text == 'Forward':
             self.direction = 1
-        else: self.direction = 2
+        else: self.direction = str(2)
         
-        self.step_val = step_val
-        self.end_val = end_val
-        self.interval_val = interval_val
+        self.step_val = str(step_val)
+        self.end_val = str(end_val)
+        self.interval_val = str(interval_val)
 
     def run(self):
         print('motor code was invoked. ')
@@ -78,6 +78,8 @@ class Worker(QObject):
 
             # Taking data from the PI as a dict. 
             # raw_data = a.recv(1024)
+            # if not raw_data:
+            #     break;
             # raw_data = raw_data.decode("utf-8")
 
             # raw_data = json.loads(raw_data) # is now a dictionary. 
@@ -99,6 +101,9 @@ class Worker(QObject):
             
             self.progress.emit(accel_data, gyro_data, pressure_data, rpm_data)
             time.sleep(0.1)
+            
+            
+            
         
         print("Session finished...")
                 
@@ -201,12 +206,12 @@ class Ui_MainWindow(QMainWindow):
     def reportProgress(self, n, b, p, r):
         self.navigation_tab_widget.setCurrentIndex(2)
         self.step_value_lbl.setText(f"Long-Running Step: {n[0]}")
-        self.gyro_x_value_lbl.setText(str(n[0]))
-        self.gyro_y_value_lbl.setText(str(n[1]))
-        self.gyro_z_value_lbl.setText(str(n[2]))        
-        self.acc_x_value_lbl.setText(str(b[0]))
-        self.acc_y_value_lbl.setText(str(b[1]))
-        self.acc_z_value_lbl.setText(str(b[2])) 
+        self.gyro_x_value_lbl.setText(str(round(n[0], 3)))
+        self.gyro_y_value_lbl.setText(str(round(n[1], 3)))
+        self.gyro_z_value_lbl.setText(str(round(n[2], 3)))        
+        self.acc_x_value_lbl.setText(str(round(b[0], 3)))
+        self.acc_y_value_lbl.setText(str(round(b[1], 3)))
+        self.acc_z_value_lbl.setText(str(round(b[2], 3))) 
         self.pressure_value_lbl.setText(str(p))
         self.rpm_value_lbl.setText(str(r))
 
